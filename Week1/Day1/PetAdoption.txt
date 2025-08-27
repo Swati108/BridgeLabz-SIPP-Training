@@ -1,0 +1,55 @@
+
+CLASS Pet:
+    # Constructor to initialize common pet attributes
+    FUNCTION __init__(name, age, breed):
+        SET this.name = name
+        SET this.age = age
+        SET this.breed = breed
+    ENDFUNCTION
+
+    # A general method for displaying info
+    FUNCTION display_info():
+        PRINT "Name:", this.name
+        PRINT "Age:", this.age
+        PRINT "Breed:", this.breed
+    ENDFUNCTION
+CLASS Dog EXTENDS Pet:
+    # Constructor for Dog
+    FUNCTION __init__(name, age, breed, size):
+        # Call the parent class constructor to initialize common attributes
+        CALL SUPER.__init__(name, age, breed)
+        # Initialize dog-specific attribute
+        SET this.size = size
+    ENDFUNCTION
+    FUNCTION make_sound():
+        PRINT "Woof!"
+    ENDFUNCTION
+ENDCLASS
+CLASS Cat EXTENDS Pet:
+    # Constructor for Cat
+    FUNCTION __init__(name, age, breed, is_litter_trained):
+        # Call the parent class constructor
+        CALL SUPER.__init__(name, age, breed)
+        # Initialize cat-specific attribute
+        SET this.is_litter_trained = is_litter_trained
+    ENDFUNCTION
+
+    # A specific method for Cat
+    FUNCTION make_sound():
+        PRINT "Meow!"
+    ENDFUNCTION
+ENDCLASS
+CLASS Bird EXTENDS Pet:
+    # Constructor for Bird
+    FUNCTION __init__(name, age, breed, can_fly):
+        # Call the parent class constructor
+        CALL SUPER.__init__(name, age, breed)
+        # Initialize bird-specific attribute
+        SET this.can_fly = can_fly
+    ENDFUNCTION
+
+    # A specific method for Bird
+    FUNCTION make_sound():
+        PRINT "Chirp!"
+    ENDFUNCTION
+ENDCLASS
