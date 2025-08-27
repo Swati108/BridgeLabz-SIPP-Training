@@ -1,0 +1,73 @@
+// Define the TextEditor class
+CLASS TextEditor:
+
+    // Attributes for the editor
+    DECLARE text AS STRING
+    DECLARE history_stack AS STACK
+
+    // Constructor to initialize the editor
+    FUNCTION __init__():
+        // The current content of the editor
+        SET this.text = ""
+        // A stack to store previous versions of the text
+        SET this.history_stack = NEW STACK()
+    ENDFUNCTION
+
+    // Method to type new text
+    FUNCTION type(new_text):
+        // 1. Before changing the text, push the CURRENT version onto the stack
+        this.history_stack.push(this.text)
+
+        // 2. Append the new text to the current text
+        SET this.text = this.text + new_text
+    ENDFUNCTION
+
+    // Method to undo the last change
+    FUNCTION undo():
+        // 1. Check if the stack is empty (nothing to undo)
+        IF this.history_stack.is_empty() THEN
+            PRINT "Nothing to undo."
+            RETURN
+        ENDIF
+
+        // 2. Pop the most recent previous state from the stack
+        DECLARE last_version AS STRING = this.history_stack.pop()
+
+        // 3. Restore the editor's text to that previous state
+        SET this.text = last_version
+    ENDFUNCTION
+
+    // Method to display the current text
+    FUNCTION show_text():
+        PRINT "Current Text: '", this.text, "'"
+    ENDFUNCTION
+
+ENDCLASS
+
+// --- Example Usage ---
+BEGIN
+    // Create a new editor
+    CREATE editor = NEW TextEditor()
+
+    // Perform some actions
+    CALL editor.type("Hello")
+    CALL editor.show_text()  // Output: Current Text: 'Hello'
+
+    CALL editor.type(" World")
+    CALL editor.show_text()  // Output: Current Text: 'Hello World'
+
+    CALL editor.type("!")
+    CALL editor.show_text()  // Output: Current Text: 'Hello World!'
+    
+    // Now, undo the actions
+    CALL editor.undo()
+    CALL editor.show_text()  // Output: Current Text: 'Hello World'
+
+    CALL editor.undo()
+    CALL editor.show_text()  // Output: Current Text: 'Hello'
+
+    CALL editor.undo()
+    CALL editor.show_text()  // Output: Current Text: ''
+
+    CALL editor.undo()      // Output: Nothing to undo.
+END
