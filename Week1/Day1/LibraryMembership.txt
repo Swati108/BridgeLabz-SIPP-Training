@@ -1,0 +1,46 @@
+// Define the Member class
+CLASS Member:
+
+    // Attributes for each member object
+    DECLARE name AS STRING
+    DECLARE member_id AS INTEGER
+    DECLARE membership_start_date AS DATE
+
+    // Constructor to initialize a new member
+    // Assumes a standard 1-year membership duration
+    FUNCTION __init__(name, member_id, start_date):
+        SET this.name = name
+        SET this.member_id = member_id
+        SET this.membership_start_date = start_date
+    ENDFUNCTION
+
+    // Method to check if the membership is currently valid
+    FUNCTION is_membership_valid():
+        // 1. Get the current date from the system
+        DECLARE current_date AS DATE = GET_CURRENT_DATE()
+
+        // 2. Calculate the expiry date (start date + 1 year)
+        DECLARE expiry_date AS DATE = this.membership_start_date.add_years(1)
+
+        // 3. Compare the current date with the expiry date
+        IF current_date <= expiry_date THEN
+            // If the current date is on or before the expiry date, it's valid
+            PRINT this.name, "'s membership is Active."
+            RETURN TRUE
+        ELSE
+            // Otherwise, it has expired
+            PRINT this.name, "'s membership has Expired."
+            RETURN FALSE
+        ENDIF
+    ENDFUNCTION
+
+ENDCLASS
+
+// --- Example Usage ---
+BEGIN
+    // Create a new member whose membership started on June 1, 2025
+    CREATE member1 = NEW Member("Alice", 101, DATE("2025-06-01"))
+
+    // Check the member's status
+    CALL member1.is_membership_valid()
+END
