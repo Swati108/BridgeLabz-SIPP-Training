@@ -1,0 +1,98 @@
+CLASS HospitalMapper
+    // The core data structure: Map<DepartmentName, ListOfDoctors>
+    PRIVATE departmentMap AS Map<String, List<Doctor>>
+
+    CONSTRUCTOR()
+        this.departmentMap = NEW Map()
+    END CONSTRUCTOR
+
+    // --- Core Methods ---
+
+    // Adds a doctor to the correct department's list.
+    // Creates the department if it doesn't exist yet.
+    METHOD addDoctor(departmentName, doctor)
+        // If the department is not in our map, create an empty list for it first.
+        IF NOT this.departmentMap.containsKey(departmentName) THEN
+            this.departmentMap[departmentName] = NEW List()
+        END IF
+        
+        // Add the new doctor to the list for that department.
+        GET doctorList from this.departmentMap[departmentName]
+        ADD doctor to doctorList
+        PRINT "Added " + doctor.getInfo() + " to the '" + departmentName + "' department."
+    END METHOD
+
+    // Filters and returns a list of doctors from a specific department
+    // who match the given specialization.
+    METHOD findDoctorsBySpecialization(departmentName, specialization) RETURNS List<Doctor>
+        DEFINE specialistsFound AS NEW List<Doctor>()
+
+        // Check if the department exists in our map.
+        IF this.departmentMap.containsKey(departmentName) THEN
+            DEFINE allDoctorsInDept = this.departmentMap[departmentName]
+            
+            // Iterate through all doctors in that department's list.
+            FOR EACH doctor in allDoctorsInDept
+                // If a doctor's specialization matches, add them to our results.
+                IF doctor.specialization == specialization THEN
+                    ADD doctor to specialistsFound
+                END IF
+            END FOR
+        END IF
+
+        RETURN specialistsFound
+    END METHOD
+
+    // A helper method to display all doctors in a given department.
+    METHOD displayDepartment(departmentName)
+        PRINT "\n--- Doctors in '" + departmentName + "' ---"
+        IF this.departmentMap.containsKey(departmentName) THEN
+            DEFINE doctors = this.departmentMap[departmentName]
+            FOR EACH doctor in doctors
+                PRINT "- " + doctor.getInfo()
+            END FOR
+        ELSE
+            PRINT "Department not found."
+        END IF
+        PRINT "------------------------"
+    END METHOD
+
+FUNCTION Main()
+    // 1. Create doctor objects
+    DEFINE drEvans = NEW Doctor("D101", "Evans", "Cardiology")
+    DEFINE drSmith = NEW Doctor("D102", "Smith", "Neurosurgery")
+    DEFINE drJones = NEW Doctor("D103", "Jones", "Cardiology")
+    DEFINE drAllen = NEW Doctor("D201", "Allen", "Pediatrics")
+    DEFINE drKing = NEW Doctor("D202", "King", "General Surgery")
+
+    // 2. Initialize the mapper and add doctors
+    DEFINE cityHospital = NEW HospitalMapper()
+    cityHospital.addDoctor("Cardiovascular", drEvans)
+    cityHospital.addDoctor("Surgery", drSmith)
+    cityHospital.addDoctor("Cardiovascular", drJones)
+    cityHospital.addDoctor("Pediatrics", drAllen)
+    cityHospital.addDoctor("Surgery", drKing)
+
+    // 3. Display initial setup
+    cityHospital.displayDepartment("Cardiovascular")
+    cityHospital.displayDepartment("Surgery")
+
+    // 4. Use the filter to find specialists
+    PRINT "\nSearching for 'Cardiology' specialists in the 'Cardiovascular' department..."
+    
+    DEFINE cardiologists = cityHospital.findDoctorsBySpecialization("Cardiovascular", "Cardiology")
+
+    // 5. Display the filtered results
+    IF cardiologists.isEmpty() THEN
+        PRINT "No specialists found."
+    ELSE
+        PRINT "Found the following specialists:"
+        FOR EACH specialist in cardiologists
+            PRINT "-> " + specialist.getInfo()
+        END FOR
+    END IF
+
+END FUNCTION
+
+// Start the program
+CALL Main()
