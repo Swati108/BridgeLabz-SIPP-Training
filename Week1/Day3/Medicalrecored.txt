@@ -1,0 +1,51 @@
+
+CLASS LabReport IMPLEMENTS Printable, Searchable
+    ATTRIBUTES:
+        STRING patient_name, test_type
+        STRING results_data
+    CONSTRUCTOR(name, type, results)
+        this.patient_name = name
+        this.test_type = type
+        this.results_data = results
+    END CONSTRUCTOR
+    METHOD print()
+        PRINT "--- Lab Report ---"
+        PRINT "Patient: " + this.patient_name
+        PRINT "Test: " + this.test_type
+        PRINT "Results: " + this.results_data
+        PRINT "------------------"
+    END METHOD
+    METHOD search(query_text)
+        RETURN this.results_data.contains(query_text)
+    END METHOD
+END CLASS
+CLASS ClinicalNote IMPLEMENTS Printable, Searchable
+    ATTRIBUTES:
+        STRING patient_name, doctor_name, notes
+    CONSTRUCTOR(p_name, d_name, notes)
+        this.patient_name = p_name
+        this.doctor_name = d_name
+        this.notes = notes
+    END CONSTRUCTOR
+    METHOD print()
+        PRINT "--- Clinical Note ---"
+        PRINT "Patient: " + this.patient_name
+        PRINT "Doctor: " + this.doctor_name
+        PRINT "Notes: " + this.notes
+        PRINT "-------------------"
+    END METHOD
+
+    METHOD search(query_text)
+        RETURN this.notes.contains(query_text)
+    END METHOD
+END CLASS
+FUNCTION main_medical()
+    CREATE report1 = NEW LabReport("Sunita Devi", "Blood Panel", "Hemoglobin: 13.1")
+    CREATE report2 = NEW ClinicalNote("Rajesh Kumar", "Dr. Verma", "Patient feels better.")
+    CREATE LIST medical_records = [report1, report2]
+    PRINT "\nPrinting all medical records:"
+    FOR EACH record IN medical_records
+        record.print() // This is polymorphism!
+    END FOR
+END FUNCTION
+main_medical()
