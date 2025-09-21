@@ -1,0 +1,115 @@
+// A simple class to represent a patient's data.
+CLASS Patient
+    ATTRIBUTES:
+        STRING patient_id
+        STRING name
+        STRING diagnosis
+
+    CONSTRUCTOR(id, name, diagnosis)
+        this.patient_id = id
+        this.name = name
+        this.diagnosis = diagnosis
+    END CONSTRUCTOR
+
+    // A helper method to display patient details.
+    METHOD display()
+        PRINT "ID: " + this.patient_id + ", Name: " + this.name + ", Diagnosis: " + this.diagnosis
+    END METHOD
+END CLASS
+
+// The main class to manage all patient records using a HashMap.
+CLASS PatientManager
+    ATTRIBUTES:
+        // The HashMap stores the patient_id (String) as the key
+        // and the Patient object as the value.
+        HASHMAP patient_records
+
+    CONSTRUCTOR()
+        // Initialize an empty HashMap.
+        this.patient_records = NEW HASHMAP()
+        PRINT "PatientManager initialized."
+    END CONSTRUCTOR
+
+    // --- Core HashMap Operations ---
+
+    // 1. ADD a new patient record. (Efficient Insertion)
+    METHOD add_patient(patient_obj)
+        // Use the patient's ID as the unique key.
+        this.patient_records.put(patient_obj.patient_id, patient_obj)
+        PRINT "Added patient: " + patient_obj.name
+    END METHOD
+
+    // 2. RETRIEVE a patient record by ID. (Efficient Retrieval)
+    METHOD get_patient(patient_id)
+        IF this.patient_records.contains_key(patient_id) THEN
+            RETURN this.patient_records.get(patient_id)
+        ELSE
+            PRINT "Error: Patient with ID '" + patient_id + "' not found."
+            RETURN NULL
+        END IF
+    END METHOD
+
+    // 3. UPDATE a patient's record. (Efficient Update)
+    METHOD update_diagnosis(patient_id, new_diagnosis)
+        // First, retrieve the record.
+        DEFINE patient_to_update = this.get_patient(patient_id)
+
+        // If the patient exists, update their data.
+        IF patient_to_update IS NOT NULL THEN
+            patient_to_update.diagnosis = new_diagnosis
+            PRINT "Updated diagnosis for patient ID '" + patient_id + "'."
+        END IF
+    END METHOD
+
+    // 4. DELETE a patient record. (Efficient Deletion)
+    METHOD delete_patient(patient_id)
+        IF this.patient_records.contains_key(patient_id) THEN
+            this.patient_records.remove(patient_id)
+            PRINT "Deleted patient with ID '" + patient_id + "'."
+        ELSE
+            PRINT "Error: Cannot delete. Patient with ID '" + patient_id + "' not found."
+        END IF
+    END METHOD
+END CLASS
+
+// --- Main Execution to Demonstrate Usage ---
+FUNCTION main()
+    // Create a manager instance.
+    CREATE manager = NEW PatientManager()
+    PRINT "------------------------------------"
+
+    // Create and add patient records.
+    manager.add_patient(NEW Patient("P001", "Amit Sharma", "Fever"))
+    manager.add_patient(NEW Patient("P002", "Sunita Devi", "Common Cold"))
+    manager.add_patient(NEW Patient("P003", "Rohan Singh", "Fracture"))
+    PRINT "------------------------------------"
+
+    // Retrieve a patient.
+    PRINT "Retrieving patient P002..."
+    DEFINE retrieved_patient = manager.get_patient("P002")
+    IF retrieved_patient IS NOT NULL THEN
+        retrieved_patient.display()
+    END IF
+    PRINT "------------------------------------"
+
+    // Update a patient's record.
+    PRINT "Updating patient P001's diagnosis..."
+    manager.update_diagnosis("P001", "Recovered")
+    DEFINE updated_patient = manager.get_patient("P001")
+    IF updated_patient IS NOT NULL THEN
+        updated_patient.display()
+    END IF
+    PRINT "------------------------------------"
+
+    // Delete a patient record.
+    PRINT "Deleting patient P003..."
+    manager.delete_patient("P003")
+    PRINT "------------------------------------"
+
+    // Try to retrieve the deleted patient.
+    PRINT "Attempting to retrieve deleted patient P003..."
+    manager.get_patient("P003") // This will show the "not found" error.
+END FUNCTION
+
+// Run the main program.
+main()
