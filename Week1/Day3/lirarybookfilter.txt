@@ -1,0 +1,60 @@
+// A simple class to hold book data.
+CLASS Book
+    ATTRIBUTES:
+        STRING title
+        INTEGER publication_year
+        DOUBLE rating
+
+    CONSTRUCTOR(title, year, rating)
+        this.title = title
+        this.publication_year = year
+        this.rating = rating
+    END CONSTRUCTOR
+
+    // Helper method to display book details.
+    METHOD display()
+        PRINT "Title: '" + this.title + "', Year: " + this.publication_year + ", Rating: " + this.rating
+    END METHOD
+END CLASS
+
+// --- Main execution block to demonstrate filtering ---
+FUNCTION main()
+    // 1. Create a list of sample books.
+    CREATE LIST all_books = [
+        NEW Book("The Quantum Thief", 2010, 4.3),
+        NEW Book("A Memory Called Empire", 2019, 4.7),
+        NEW Book("Project Hail Mary", 2021, 4.9),
+        NEW Book("Ancillary Justice", 2013, 4.2),
+        NEW Book("The Three-Body Problem", 2008, 4.6),
+        NEW Book("Gideon the Ninth", 2019, 4.4),
+        NEW Book("This Is How You Lose the Time War", 2019, 4.8)
+    ]
+
+    PRINT "--- All Books in Library ---"
+    FOR EACH book IN all_books
+        book.display()
+    END FOR
+
+    // 2. Use a stream to filter the books.
+    // The stream() method creates a sequence of elements to process.
+    // The filter() methods apply conditions using lambda expressions.
+    // A lambda expression is a short, anonymous function (e.g., book -> condition).
+    CREATE LIST highly_rated_recent_books = all_books.stream()
+        .filter( book -> book.publication_year > 2015 )  // Lambda for the year filter
+        .filter( book -> book.rating > 4.5 )             // Lambda for the rating filter
+        .collect_to_list()                               // Gathers the results into a new list.
+
+    // 3. Print the filtered results.
+    PRINT "\n--- Filtered Books (Published after 2015 with rating > 4.5) ---"
+    IF highly_rated_recent_books.is_empty() THEN
+        PRINT "No books match the criteria."
+    ELSE
+        FOR EACH book IN highly_rated_recent_books
+            book.display()
+        END FOR
+    END IF
+
+END FUNCTION
+
+// Run the main program.
+main()
