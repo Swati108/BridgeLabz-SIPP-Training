@@ -1,0 +1,95 @@
+// The class that handles the maze-solving logic.
+CLASS MazeSolver
+    ATTRIBUTES:
+        GRID maze_grid // A 2D array representing the maze
+        INTEGER total_rows
+        INTEGER total_cols
+
+    CONSTRUCTOR(grid)
+        this.maze_grid = grid
+        this.total_rows = grid.get_row_count()
+        this.total_cols = grid.get_col_count()
+    END CONSTRUCTOR
+
+    // --- Public method to start the solving process ---
+    METHOD solve(start_row, start_col)
+        // Start the recursive search from the starting coordinates.
+        IF find_path_recursive(start_row, start_col) IS TRUE THEN
+            PRINT "✅ Path found!"
+            this.maze_grid[start_row][start_col] = 'S' // Mark the start
+            this.print_maze()
+        ELSE
+            PRINT "❌ No path found."
+        END IF
+    END METHOD
+
+    // --- The core recursive backtracking function ---
+    // It returns TRUE if a path is found, otherwise FALSE.
+    PRIVATE METHOD find_path_recursive(row, col)
+        // --- BASE CASES (Termination Conditions) ---
+
+        // 1. Check if the current position is out of bounds or a wall.
+        IF row < 0 OR row >= this.total_rows OR col < 0 OR col >= this.total_cols THEN
+            RETURN FALSE // Out of bounds
+        END IF
+        IF this.maze_grid[row][col] == 1 OR this.maze_grid[row][col] == '*' THEN
+            RETURN FALSE // Hit a wall or already part of the path
+        END IF
+
+        // 2. Check if we have reached the destination (the 'E' marker).
+        IF this.maze_grid[row][col] == 'E' THEN
+            RETURN TRUE // Success!
+        END IF
+
+        // --- RECURSIVE STEP ---
+
+        // A. CHOOSE: Mark the current cell as part of the solution path.
+        this.maze_grid[row][col] = '*'
+
+        // B. EXPLORE: Recursively try all possible directions (Down, Right, Up, Left).
+        // If any direction returns TRUE, it means a path was found.
+        IF find_path_recursive(row + 1, col) IS TRUE THEN RETURN TRUE END IF // Move Down
+        IF find_path_recursive(row, col + 1) IS TRUE THEN RETURN TRUE END IF // Move Right
+        IF find_path_recursive(row - 1, col) IS TRUE THEN RETURN TRUE END IF // Move Up
+        IF find_path_recursive(row, col - 1) IS TRUE THEN RETURN TRUE END IF // Move Left
+
+        // C. UNCHOOSE (Backtrack): If none of the directions worked, this path is a dead end.
+        // Unmark the cell and return FALSE to the previous call.
+        this.maze_grid[row][col] = 0 // Reset the cell to a normal path
+        RETURN FALSE
+    END METHOD
+
+    // --- Helper method to print the grid ---
+    METHOD print_maze()
+        FOR EACH row IN this.maze_grid
+            PRINT row.toString()
+        END FOR
+    END METHOD
+
+END CLASS
+
+// --- Main Execution to Demonstrate Usage ---
+FUNCTION main()
+    // Define the maze layout.
+    // 0 = Open Path, 1 = Wall, 'E' = Exit
+    DEFINE maze_layout = [
+        [0, 1, 0, 0, 0],
+        [0, 1, 0, 1, 0],
+        [0, 0, 0, 1, 0],
+        [1, 1, 0, 1, 'E'],
+        [0, 0, 0, 0, 0]
+    ]
+
+    // Create a solver instance with the maze layout.
+    CREATE solver = NEW MazeSolver(maze_layout)
+
+    PRINT "Maze to solve:"
+    solver.print_maze()
+    PRINT "-----------------"
+
+    // Start solving from position (0, 0).
+    solver.solve(0, 0)
+END FUNCTION
+
+// Run the main program.
+main()
