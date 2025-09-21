@@ -1,0 +1,65 @@
+// Customer Class
+CLASS Customer
+    ATTRIBUTES:
+        STRING name
+        STRING address
+        STRING phone_number
+
+    METHODS:
+        CONSTRUCTOR(name, address, phone_number)
+            this.name = name
+            this.address = address
+            this.phone_number = phone_number
+        END CONSTRUCTOR
+END CLASS
+
+// Restaurant Class
+CLASS Restaurant
+    ATTRIBUTES:
+        STRING name
+        STRING location
+        LIST menu
+
+    METHODS:
+        CONSTRUCTOR(name, location, menu)
+            this.name = name
+            this.location = location
+            this.menu = menu
+        END CONSTRUCTOR
+END CLASS
+
+// DeliveryBoy Class
+CLASS DeliveryBoy
+    ATTRIBUTES:
+        STRING name
+        STRING vehicle_id
+        DOUBLE current_rating
+
+    METHODS:
+        CONSTRUCTOR(name, vehicle_id, rating)
+            this.name = name
+            this.vehicle_id = vehicle_id
+            this.current_rating = rating
+        END CONSTRUCTOR
+END CLASS
+// Main execution flow
+FUNCTION main()
+    // 1. Create instances of the component objects
+    CREATE customer1 = NEW Customer("Alice", "123 Maple St", "555-0101")
+    CREATE restaurant1 = NEW Restaurant("Pizza Palace", "456 Oak Ave", ["Margherita", "Pepperoni"])
+    CREATE delivery_boy1 = NEW DeliveryBoy("Bob", "BIKE-789", 4.8)
+
+    // 2. Define the items for the order
+    CREATE items_for_order = ["Margherita Pizza", "Garlic Bread"]
+
+    // 3. Create the Order object by passing the other objects into its constructor
+    // This is where composition happens.
+    CREATE order1 = NEW Order(customer1, restaurant1, delivery_boy1, items_for_order)
+
+    // 4. Use the Order object's method to display its details
+    order1.display_order_details()
+
+END FUNCTION
+
+// Run the main program
+main()
